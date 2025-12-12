@@ -1,6 +1,0 @@
-source;share/gyo_xj0_autonom/hook/pythonpath.ps1
-source;share/gyo_xj0_autonom/hook/pythonpath.dsv
-source;share/gyo_xj0_autonom/hook/pythonpath.sh
-source;share/gyo_xj0_autonom/hook/ament_prefix_path.ps1
-source;share/gyo_xj0_autonom/hook/ament_prefix_path.dsv
-source;share/gyo_xj0_autonom/hook/ament_prefix_path.sh

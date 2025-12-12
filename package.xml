@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
-  <name>gyo_xj0_autonom</name>
+  <name>gyo_xj0_autonom_NB</name>
   <version>0.0.0</version>
   <description>Györe Viktor autonóm beadandó</description>
   <maintainer email="gyoreviktor03@gmail.com">TODO:</maintainer>

@@ -20,8 +20,8 @@ setup(
     entry_points={
         'console_scripts': [
             'triangle_robot = gyo_xj0_autonom_NB.triangle_robot:main',
-            'lidar = gyo_xj0_autonom_NB.lidar:main',
             'obstacles = gyo_xj0_autonom_NB.obstacles:main',
+            
         ],
     },
 )

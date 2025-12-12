@@ -1,5 +1,3 @@
-# gyo_xj0_autonom_NB/lidar.py
-
 import math
 
 
@@ -23,35 +21,42 @@ class SimpleLidar:
 
     def scan(self, robot_x, robot_y, robot_yaw, obstacles):
         """
+        Pure geometric LIDAR scan.
+
+        Args:
+            robot_x, robot_y: robot position [m]
+            robot_yaw: robot heading [rad]
+            obstacles: list of dicts {x, y, r}
+
         Returns:
-            list of tuples: (angle [rad], distance [m or None])
+            list of (angle [rad], distance [m or None])
         """
-        results = []
+        scan_data = []
 
         for angle in self.angles:
-            hit_distance = None
             ray_angle = robot_yaw + angle
-
             dx = math.cos(ray_angle)
             dy = math.sin(ray_angle)
 
-            dist = 0.0
-            while dist <= self.max_range:
-                px = robot_x + dx * dist
-                py = robot_y + dy * dist
+            distance = None
+            d = 0.0
 
-                if self._hit_obstacle(px, py, obstacles):
-                    hit_distance = dist
+            while d <= self.max_range:
+                px = robot_x + dx * d
+                py = robot_y + dy * d
+
+                if self._hit(px, py, obstacles):
+                    distance = d
                     break
 
-                dist += self.step
+                d += self.step
 
-            results.append((angle, hit_distance))
+            scan_data.append((angle, distance))
 
-        return results
+        return scan_data
 
     @staticmethod
-    def _hit_obstacle(px, py, obstacles):
+    def _hit(px, py, obstacles):
         for obs in obstacles:
             ox, oy, r = obs["x"], obs["y"], obs["r"]
             if math.hypot(px - ox, py - oy) <= r:

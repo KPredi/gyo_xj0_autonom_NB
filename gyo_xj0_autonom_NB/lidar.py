@@ -1,77 +1,59 @@
-import rclpy
-from rclpy.node import Node
-from visualization_msgs.msg import Marker
-from geometry_msgs.msg import Point
+# gyo_xj0_autonom_NB/lidar.py
+
 import math
 
-class Lidar(Node):
-    def __init__(self):
-        super().__init__('lidar')
-        self.pub = self.create_publisher(Marker, '/lidar', 10)
-        self.timer = self.create_timer(0.1, self.publish)
 
-        self.robot_x = 0.0
-        self.robot_y = 0.0
-        self.robot_yaw = 0.0
+class SimpleLidar:
+    def __init__(
+        self,
+        fov_deg=120,
+        num_rays=31,
+        max_range=2.0,
+        step=0.02,
+    ):
+        self.fov = math.radians(fov_deg)
+        self.num_rays = num_rays
+        self.max_range = max_range
+        self.step = step
 
-        self.obstacles = [(1.2, 0.2), (1.8, -0.4), (1.0, 0.8)]
-        self.max_range = 2.0
-        self.hit_dist = 0.3
+        self.angles = [
+            -self.fov / 2 + i * self.fov / (self.num_rays - 1)
+            for i in range(self.num_rays)
+        ]
 
-    def publish(self):
-        marker = Marker()
-        marker.header.frame_id = "map"
-        marker.header.stamp = self.get_clock().now().to_msg()
-        marker.ns = "lidar"
-        marker.id = 0
-        marker.type = Marker.LINE_LIST
-        marker.action = Marker.ADD
+    def scan(self, robot_x, robot_y, robot_yaw, obstacles):
+        """
+        Returns:
+            list of tuples: (angle [rad], distance [m or None])
+        """
+        results = []
 
-        marker.scale.x = 0.03
-        marker.color.a = 1.0
+        for angle in self.angles:
+            hit_distance = None
+            ray_angle = robot_yaw + angle
 
-        angles = [i * math.pi / 12 for i in range(-6, 7)]
+            dx = math.cos(ray_angle)
+            dy = math.sin(ray_angle)
 
-        for a in angles:
-            angle = self.robot_yaw + a
-            dx = math.cos(angle)
-            dy = math.sin(angle)
+            dist = 0.0
+            while dist <= self.max_range:
+                px = robot_x + dx * dist
+                py = robot_y + dy * dist
 
-            hit = False
-            for ox, oy in self.obstacles:
-                t = (ox - self.robot_x) * dx + (oy - self.robot_y) * dy
-                if t > 0:
-                    cx = self.robot_x + dx * t
-                    cy = self.robot_y + dy * t
-                    d = math.hypot(ox - cx, oy - cy)
-                    if d < self.hit_dist and t < self.max_range:
-                        hit = True
+                if self._hit_obstacle(px, py, obstacles):
+                    hit_distance = dist
+                    break
 
-            p1 = Point(x=self.robot_x, y=self.robot_y, z=0.0)
-            p2 = Point(
-                x=self.robot_x + dx * self.max_range,
-                y=self.robot_y + dy * self.max_range,
-                z=0.0
-            )
+                dist += self.step
 
-            marker.points.append(p1)
-            marker.points.append(p2)
+            results.append((angle, hit_distance))
 
-            if hit and abs(a) < math.pi / 4:
-                marker.colors.append(self.color(1, 0, 0))
-                marker.colors.append(self.color(1, 0, 0))
-            else:
-                marker.colors.append(self.color(0, 1, 0))
-                marker.colors.append(self.color(0, 1, 0))
+        return results
 
-        self.pub.publish(marker)
-
-    def color(self, r, g, b):
-        from std_msgs.msg import ColorRGBA
-        return ColorRGBA(r=r, g=g, b=b, a=1.0)
-
-def main():
-    rclpy.init()
-    node = Lidar()
-    rclpy.spin(node)
-    rclpy.shutdown()
+    @staticmethod
+    def _hit_obstacle(px, py, obstacles):
+        for obs in obstacles:
+            ox, oy, r = obs["x"], obs["y"], obs["r"]
+            if math.hypot(px - ox, py - oy) <= r:
+                return True
+        return False

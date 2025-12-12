@@ -20,7 +20,7 @@ setup(
     entry_points={
         'console_scripts': [
             'triangle_robot = gyo_xj0_autonom_NB.triangle_robot:main',
-            'obstacles = gyo_xj0_autonom_NB.obstacles:main',
+            'obstacle_marker = gyo_xj0_autonom_NB.obstacle_marker:main',
             
         ],
     },

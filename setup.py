@@ -22,6 +22,7 @@ setup(
             'triangle_robot = gyo_xj0_autonom_NB.triangle_robot:main',
             'obstacles_publisher = gyo_xj0_autonom_NB.obstacles_publisher:main',
             'path_publisher = gyo_xj0_autonom_NB.path_publisher:main',
+            'lidar_stop = gyo_xj0_autonom_NB.lidar_stop:main',
         ],
     },
 )

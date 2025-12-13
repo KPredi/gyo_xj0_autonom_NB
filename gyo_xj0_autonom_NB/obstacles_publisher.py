@@ -1,64 +1,72 @@
+#!/usr/bin/env python3
 import rclpy
 from rclpy.node import Node
 
-from visualization_msgs.msg import Marker
-from geometry_msgs.msg import Point
+from visualization_msgs.msg import Marker, MarkerArray
 
 
-class ObstaclesPublisher(Node):
+class Obstacles(Node):
+    """
+    3 db téglalap akadály (CUBE marker). Publikálja MarkerArray-ként: /obstacles
+    A LIDAR node ebből számol (raycast).
+    """
+
     def __init__(self):
-        super().__init__('obstacles_publisher')
+        super().__init__('obstacles')
+        self.pub = self.create_publisher(MarkerArray, '/obstacles', 10)
 
-        self.pub = self.create_publisher(Marker, '/obstacles_marker', 10)
-        self.timer = self.create_timer(0.5, self.publish_obstacles)
+        # 1) hosszú, keskeny az első hosszú egyenes közepénél
+        # 2) kisebb a következő szakaszon
+        # 3) átlagos a harmadik szakaszon
+        self.obstacles = [
+            # (cx, cy, sx, sy)
+            (7.5, 0.0, 0.8, 3.5),     # hosszú (Y irányban nyúlik), keskeny X
+            (15.0, -2.5, 1.0, 1.0),   # kicsi
+            (9.0, -5.0, 2.0, 1.2),    # átlagos
+        ]
 
-        self.get_logger().info('ObstaclesPublisher started')
+        self.timer = self.create_timer(0.2, self.publish)
+        self.get_logger().info('Obstacles publishing /obstacles (MarkerArray)')
 
-    def publish_obstacles(self):
-        marker = Marker()
-        marker.header.frame_id = 'map'
-        marker.header.stamp = self.get_clock().now().to_msg()
+    def publish(self):
+        arr = MarkerArray()
+        for i, (cx, cy, sx, sy) in enumerate(self.obstacles):
+            m = Marker()
+            m.header.frame_id = 'map'
+            m.header.stamp = self.get_clock().now().to_msg()
+            m.ns = 'obstacles'
+            m.id = i
+            m.type = Marker.CUBE
+            m.action = Marker.ADD
 
-        marker.ns = 'obstacles'
-        marker.id = 0
-        marker.type = Marker.CUBE_LIST
-        marker.action = Marker.ADD
+            m.pose.position.x = float(cx)
+            m.pose.position.y = float(cy)
+            m.pose.position.z = 0.0
+            m.pose.orientation.w = 1.0
 
-        # téglalap "pixelek" mérete
-        marker.scale.x = 0.4
-        marker.scale.y = 0.4
-        marker.scale.z = 0.4
+            m.scale.x = float(sx)
+            m.scale.y = float(sy)
+            m.scale.z = 0.4
 
-        marker.color.r = 1.0
-        marker.color.g = 0.0
-        marker.color.b = 0.0
-        marker.color.a = 1.0
+            m.color.r = 0.3
+            m.color.g = 0.3
+            m.color.b = 0.3
+            m.color.a = 1.0
 
-        marker.points.clear()
+            arr.markers.append(m)
 
-        # ---------- 1. akadály (hosszú, keskeny) ----------
-        for x in [7.0 + i * 0.4 for i in range(8)]:
-            p = Point(x=x, y=0.0, z=0.0)
-            marker.points.append(p)
-
-        # ---------- 2. akadály (kicsi) ----------
-        for dx in [0.0, 0.4]:
-            for dy in [0.0, 0.4]:
-                p = Point(x=15.0 + dx, y=-2.5 + dy, z=0.0)
-                marker.points.append(p)
-
-        # ---------- 3. akadály (közepes) ----------
-        for dx in [0.0, 0.4, 0.8]:
-            for dy in [0.0, 0.4]:
-                p = Point(x=8.0 + dx, y=-5.0 + dy, z=0.0)
-                marker.points.append(p)
-
-        self.pub.publish(marker)
+        self.pub.publish(arr)
 
 
 def main():
     rclpy.init()
-    node = ObstaclesPublisher()
-    rclpy.spin(node)
-    node.destroy_node()
-    rclpy.shutdown()
+    node = Obstacles()
+    try:
+        rclpy.spin(node)
+    finally:
+        node.destroy_node()
+        rclpy.shutdown()
+
+
+if __name__ == '__main__':
+    main()

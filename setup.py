@@ -21,7 +21,8 @@ setup(
         'console_scripts': [
             'triangle_robot = gyo_xj0_autonom_NB.triangle_robot:main',
             'obstacle_marker = gyo_xj0_autonom_NB.obstacle_marker:main',
-            
+            'path_publisher = gyo_xj0_autonom_NB.path_publisher:main',
+            'path_follower = gyo_xj0_autonom_NB.path_follower:main',
         ],
     },
 )

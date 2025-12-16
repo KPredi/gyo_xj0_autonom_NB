@@ -19,10 +19,10 @@ setup(
     license='GNU General Public License v3.0',
     entry_points={
         'console_scripts': [
-            'triangle_robot = gyo_xj0_autonom_NB.triangle_robot:main',
-            'obstacles_publisher = gyo_xj0_autonom_NB.obstacles_publisher:main',
-            'path_publisher = gyo_xj0_autonom_NB.path_publisher:main',
-            'lidar_stop = gyo_xj0_autonom_NB.lidar_stop:main',
+            'robot = gyo_xj0_autonom_NB.robot:main',
+            'akadalyok = gyo_xj0_autonom_NB.akadalyok:main',
+            'utvonal = gyo_xj0_autonom_NB.utvonal:main',
+            'lidar = gyo_xj0_autonom_NB.lidar:main',
         ],
     },
 )

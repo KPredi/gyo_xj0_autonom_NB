@@ -11,6 +11,7 @@ A megvalósítás elején a mobil robotika alapjain használt szimulált autót 
 ## A 4 node tartalma
 
 ###Útvonal Kiadó (utvonal.py)
+
 Fő feladata:
   Definiálja az útvonalat
   Közzéteszi az útvonalat két formában:
@@ -26,6 +27,7 @@ Fontos részletek:
     y: függőleges koordináta
 
 ###Akadályok (akadalyok.py)
+
 Fő feladata:
   Létrehoz 3 téglalap alakú akadályt
   Közzéteszi őket RViz-ben megjelenítésre
@@ -48,6 +50,7 @@ Működés:
   A LIDAR ezeket az akadályokat használja a sugár-metszések számításához
 
 ###LIDAR Érzékelő (lidar.py)
+
 Fő feladata:
   Szimulálja a robot LIDAR szenzorát
   Érzékeli az akadályokat különböző irányokban
@@ -69,6 +72,7 @@ Vizualizáció:
   Biztonságos zóna: Lila kör a robot körül
 
 ###Robot Irányító (robot.py)
+
 Fő feladata:
   Követi az útvonalat
   Észleli és megkerüli az akadályokat

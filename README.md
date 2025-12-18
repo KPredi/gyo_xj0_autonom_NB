@@ -10,7 +10,7 @@ A megvalósítás elején a mobil robotika alapjain használt szimulált autót 
 
 ## A 4 node tartalma
 
-###Útvonal Kiadó (utvonal.py)
+### Útvonal Kiadó (utvonal.py)
 
 Fő feladata:
   Definiálja az útvonalat
@@ -26,7 +26,7 @@ Fontos részletek:
     x: vízszintes koordináta
     y: függőleges koordináta
 
-###Akadályok (akadalyok.py)
+### Akadályok (akadalyok.py)
 
 Fő feladata:
   Létrehoz 3 téglalap alakú akadályt
@@ -49,7 +49,7 @@ Működés:
   Minden 0.2 másodpercben frissíti a pozíciójukat (bár statikusak)
   A LIDAR ezeket az akadályokat használja a sugár-metszések számításához
 
-###LIDAR Érzékelő (lidar.py)
+### LIDAR Érzékelő (lidar.py)
 
 Fő feladata:
   Szimulálja a robot LIDAR szenzorát
@@ -71,7 +71,7 @@ Vizualizáció:
   LIDAR sugarak: Kék vonalak (piros ha előtte akadály, sárga ha oldalt)
   Biztonságos zóna: Lila kör a robot körül
 
-###Robot Irányító (robot.py)
+### Robot Irányító (robot.py)
 
 Fő feladata:
   Követi az útvonalat
@@ -124,3 +124,16 @@ Koordináta-rendszer kezelése:
     Megjegyzi hol hagyta abba az útvonalat (self.eredeti_utvonal_index)
     Megjegyzi a megállási pozíciót (self.megallas_pozicio)
     Visszatérve pontosan ugyanoda tér vissza
+
+## Indítása
+### 1. terminál
+``` r
+cd ~/ros2_ws
+colcon build --packages-select gyo_xj0_autonom_NB
+source install/setup.bash
+ros2 launch gyo_xj0_autonom_NB indito.py
+```
+### 2. terminál
+``` r
+rviz2
+```
